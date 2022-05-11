@@ -1,5 +1,7 @@
 # JS-Trivia
 
+https://dkempen98.github.io/JS-trivia/
+
 Timed trivia game with high score tracking and a timer.
 
 ## Description
