@@ -7,6 +7,7 @@ var answerOne;
 var answerTwo;
 var answerThree;
 var answerFour;
+var leaders;
 
 var timerDisplay;
 var timeRemaining;
@@ -95,7 +96,7 @@ function startTimer() {
         scoreDisplay.textContent = ('Score: ' + score);
         // add logic for game win stopping timer and adding to score
         
-        if (timeRemaining <= 0 || currentQuestion == 7) {
+        if (timeRemaining <= 0) {
             timeRemaining = 0;
             clearInterval(timer);
             timerDisplay.textContent = ('Time Remaining: ' + timeRemaining);
@@ -206,7 +207,10 @@ function checkAnswer() {
     } else {
         currentQuestion++
         score++
-        // endGame()
+        timeRemaining = 0;
+        clearInterval(timer);
+        timerDisplay.textContent = ('Time Remaining: ' + timeRemaining);
+        endGame()
     }
 }
 
@@ -225,8 +229,12 @@ function wrongAnswer() {
     }
     scoreDisplay.textContent = ('Score: ' + score);
     timeRemaining = timeRemaining - 10;
-
+    
 }
+
+// End of game allows initials to be entered
+// Displays final score
+// Saves the score to the user's browser and ranks it on the high score page
 
 function endGame() {
     answerOne.remove();
@@ -248,14 +256,20 @@ function endGame() {
             }
             boardScores.push(finalScores);
             boardScores = boardScores.concat(JSON.parse(localStorage.getItem('finalScores')));
-
+            
             localStorage.setItem('finalScores', JSON.stringify(boardScores));
             highScores()
         }
     })
 }
 
+// High score page is opened after initials are submitted or when the high scores button is pushed
+// saved locally
+
 function highScores() {
+    timeRemaining = 0;
+    clearInterval(timer);
+
     if (initialForm !== undefined) {
         initialForm.remove()
     }
@@ -280,6 +294,9 @@ function highScores() {
     if (scoreDisplay !== undefined) {
         scoreDisplay.remove();
     }
+    if (leaders !== undefined) {
+        leaders.remove();
+    }
     questionText.textContent = 'High Scores'
     var storedScores = JSON.parse(localStorage.getItem('finalScores'))
     console.log(storedScores);
@@ -298,7 +315,10 @@ function highScores() {
     for (let i = 0; i < boardScores.length; i++) {
         var nameScore = JSON.stringify(boardScores[i], null, 5)
         leaders = document.createElement('li');
-        leaders.textContent = (nameScore);
+        var brokenUpJSON = nameScore.split('"');
+        brokenUpJSON.push(brokenUpJSON[6].split('}'));
+        console.log(brokenUpJSON);
+        leaders.textContent = (brokenUpJSON[3] + brokenUpJSON[7][0]);
         answerArea.appendChild(leaders);
     }
 }
@@ -313,16 +333,8 @@ function sortBoard (a, b) {
     }
 }
 
-
-// End of game allows initials to be entered
-// Displays final score
-// Saves the score to the user's browser and ranks it on the high score page
-
-// High score page is opened after initials are submitted or when the high scores button is pushed
-// saved locally
-// Has a clear history button for the high scores
-
 // Create a start button that should initiate the timer and question 1
+// Also has a button to go straight to the high scores page
 
 startButton.addEventListener("click", startGame)
 scoresButton.addEventListener("click", highScores)
